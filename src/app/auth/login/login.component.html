@@ -1,0 +1,66 @@
+<div class="container">
+  <div class="row">
+    <div class="col-12 col-md-10 col-lg-6 mx-auto">
+      <div class="card my-5 p-3">
+        <div class="card-body text-center">
+          <h1 class="card-title text-primary">Sistema de Requisições</h1>
+
+          <form class="col-lg-8 col-md-10 mx-auto mt-4" [formGroup]="form" (ngSubmit)="login()">
+            <div class="form-group d-flex justify-content-between align-items-baseline gap-2">
+              <label for="email" class="form-label">Email</label>
+              <input 
+                tabindex="1" 
+                formControlName="email"
+                type="email" 
+                class="from-control w-75" 
+                placeholder="Digite seu e-mail">
+            </div>
+            <div class="form-group mt-3 d-flex justify-content-between align-items-baseline gap-2">
+              <label for="senha" class="form-label">Senha</label>
+              <input 
+                tabindex="2" 
+                formControlName="senha"
+                type="password" 
+                class="from-control w-75" 
+                placeholder="Digite sua senha">
+            </div>
+            <a role="button" class="text-primary text-decoration-none" (click)="abrirModal(content)">Esqueci minha senha</a>
+            <div class="d-grid mx-4 gap-2 mt-4">
+              <button type="submit" class="btn btn-primary" tabindex="3" >
+                <i class="pi pi-sign-in me-1"></i>
+                Login
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #content let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Recuperação de conta</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('fechar')"></button>
+  </div>
+  <form [formGroup]="formRecuperacao" (ngSubmit)="modal.close('enviar')">
+  <div class="modal-body">
+      <div class="alert alert-warning">
+        Enviaremos um email par ao endereço informado com instruções de recuperação.
+      </div>
+      <div class="form-group d-flex justify-content-between align-items-baseline gap-2">
+        <label for="emailRecuperacao" class="form-label">Endereço de email</label>
+        <input 
+          tabindex="1" 
+          formControlName="emailRecuperacao"
+          type="email" 
+          class="from-control w-75" 
+          placeholder="Digite seu e-mail">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-outline-dark col-md-3" (click)="modal.dismiss('fechar')">Cancelar</button>
+      <button type="submit" class="btn btn-primary col-md-3" (click)="modal.close('Save click')">Save</button>
+    </div>
+  </form>
+</ng-template>
