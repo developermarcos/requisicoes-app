@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { AuthenticationService } from '../auth/services/authentication.service';
+import { AuthenticationService } from '../shared/auth/authentication.service';
 
 @Component({
   selector: 'app-painel',

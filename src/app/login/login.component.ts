@@ -2,7 +2,7 @@ import { Component, OnInit, TemplateRef } from '@angular/core';
 import { AbstractControl, FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { AuthenticationService } from '../services/authentication.service';
+import { AuthenticationService } from '../shared/auth/authentication.service';
 
 @Component({
   selector: 'app-login',

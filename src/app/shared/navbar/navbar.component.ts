@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 import firebase from 'firebase/compat/app';
-import { AuthenticationService } from '../auth/services/authentication.service';
+import { AuthenticationService } from '../auth/authentication.service';
 import { Router } from '@angular/router';
 
 @Component({
