@@ -9,9 +9,10 @@
           role="button"
           class="btn btn-outline-primary col-md-2"
           routerLink="/painel">
-          <i class="pi pi-sign-out me-2"></i>Voltar
+          <i class="pi pi-sign-out me-2 rotated-180"></i>Voltar
         </a>
         <button
+          (click)="gravar(modal)"
           type="button"
           class="btn btn-primary md-md-1 col-md-2">
           <i class="pi pi-user-plus me-2"></i>Novo
@@ -22,15 +23,66 @@
       <table class="table table-light table-striped table-hover">
         <thead class="thead-dark">
           <tr>
-            <th>Nome</th>
-            <th>Telefone</th>
-            <th>Ações</th>
+            <th class="w-50">Nome</th>
+            <th class="w-25">Telefone</th>
+            <th class="w-25">Ações</th>
           </tr>
         </thead>
-        <tbody>
-          
+        <tbody class="">
+          <tr *ngFor="let departamento of (departamentos$ | async)">
+            <td>{{departamento.nome}}</td>
+            <td>{{departamento.telefone}}</td>
+            <td class="d-flex gap-2">
+              <button
+                (click)="gravar(modal, departamento)" 
+                type="button"
+                class="btn btn-success" 
+                title="Editar">
+                <i class="pi pi-pencil"></i>
+              </button>
+              <button 
+                type="button"
+                class="btn btn-danger" 
+                title="Excluir">
+                <i class="pi pi-trash"></i>
+              </button>
+            </td>
+          </tr>
         </tbody>
       </table>
     </div>
   </div>
 </div>
+
+<ng-template #modal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Cadastrar novo departamento</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('fechar')"></button>
+  </div>
+  <form [formGroup]="form" (ngSubmit)="modal.close('gravar')">
+  <div class="modal-body">
+      <div class="form-group d-flex justify-content-between align-items-baseline gap-2">
+        <label for="nome" class="form-label">Nome</label>
+        <input 
+          tabindex="1" 
+          formControlName="nome"
+          type="text" 
+          class="from-control w-75" 
+          placeholder="Digite o nome do departamento">
+      </div>
+      <div class="form-group d-flex justify-content-between align-items-baseline gap-2">
+        <label for="telefone" class="form-label">Telefone</label>
+        <input 
+          tabindex="2" 
+          formControlName="telefone"
+          type="text" 
+          class="from-control w-75" 
+          placeholder="Digite o telefone do departamento">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-outline-dark col-md-3" (click)="modal.dismiss('fechar')">Cancelar</button>
+      <button type="submit" class="btn btn-primary col-md-3">Gravar</button>
+    </div>
+  </form>
+</ng-template>
