@@ -31,6 +31,14 @@ export class DepartamentoComponent implements OnInit {
     });
   }
 
+  get tituloModal() : string{
+    return this.id?.value ? "Atualização" : "Cadastro";
+  }
+
+  get id(){
+    return this.form.get("id");
+  }
+
   get nome(){
     return this.form.get("nome");
   }
@@ -57,5 +65,9 @@ export class DepartamentoComponent implements OnInit {
     }catch(error){
       console.log(error);
     }
+  }
+
+  public async excluir(departamento : Departamento){
+    this.departamentoService.excluir(departamento);
   }
 }
