@@ -15,6 +15,11 @@ import { AuthenticationService } from './shared/auth/authentication.service';
 import { PainelComponent } from './painel/painel.component';
 import { NavbarComponent } from './shared/navbar/navbar.component';
 import { DepartamentoModule } from './departamentos/departamento.module';
+import { NotificationService } from './shared/notification/notification.service';
+import { EquipamentoModule } from './equipamentos/equipamento.module';
+
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';//notification animation
+import { ToastrModule } from 'ngx-toastr';//notification
 
 @NgModule({
   declarations: [
@@ -31,10 +36,12 @@ import { DepartamentoModule } from './departamentos/departamento.module';
     AngularFireModule.initializeApp(environment.firebase),
     AngularFireAuthModule,
     AngularFirestoreModule,
-
-    DepartamentoModule
+    BrowserAnimationsModule, // required animations module
+    ToastrModule.forRoot(), // ToastrModule added
+    DepartamentoModule,
+    EquipamentoModule
   ],
-  providers: [AuthenticationService],
+  providers: [AuthenticationService, NotificationService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

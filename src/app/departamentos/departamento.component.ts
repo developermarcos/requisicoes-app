@@ -2,6 +2,8 @@ import { Component, OnInit, TemplateRef } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Observable } from 'rxjs';
+import { MessageType } from '../shared/notification/model/message-type.notification.enum';
+import { NotificationService } from '../shared/notification/notification.service';
 import { Departamento } from './models/departamento.model';
 import { DepartamentoService } from './services/departamento.service';
 
@@ -18,7 +20,8 @@ export class DepartamentoComponent implements OnInit {
   constructor(
     private departamentoService : DepartamentoService,
     private modalService : NgbModal,
-    private fb : FormBuilder
+    private fb : FormBuilder,
+    private notification : NotificationService
   ) { }
 
   ngOnInit(): void {
@@ -61,13 +64,17 @@ export class DepartamentoComponent implements OnInit {
       else
         await this.departamentoService.inserir(this.form.value);
 
-      console.log(`O departamento foi salvo com sucesso!`);
+      this.notification.message(MessageType.Success, "Departamento salvo com sucesso!");
+
     }catch(error){
       console.log(error);
     }
   }
 
   public async excluir(departamento : Departamento){
-    this.departamentoService.excluir(departamento);
+    const result = await this.notification.showModal(MessageType.Question,"Exclusão de departamento", `Deseja realmente excluir o departamento ${departamento.nome}`);
+
+    if(result.isConfirmed)
+      this.departamentoService.excluir(departamento);
   }
 }
