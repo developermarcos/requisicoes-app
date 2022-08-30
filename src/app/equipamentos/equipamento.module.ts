@@ -7,6 +7,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ReactiveFormsModule } from '@angular/forms';
 
 import { NgxCurrencyModule } from 'ngx-currency';//Currency mask validation
+import { NgxMaskModule } from 'ngx-mask';
 
 
 @NgModule({
@@ -18,7 +19,8 @@ import { NgxCurrencyModule } from 'ngx-currency';//Currency mask validation
     EquipamentoRoutingModule,
     NgbModule,
     ReactiveFormsModule,
-    NgxCurrencyModule
+    NgxCurrencyModule,
+    NgxMaskModule.forChild()
   ]
 })
 export class EquipamentoModule { }

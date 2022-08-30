@@ -13,7 +13,11 @@ export class NotificationService {
   public showModal(Type : MessageType, titulo : string, message : string){
     switch(Type){
       case MessageType.Alert:
-        return Swal.fire('Mensagem sucesso! Swal.fire');
+        return Swal.fire({
+          title : titulo,
+          text : message,
+          confirmButtonText : 'OK'
+        });
       case MessageType.Question:
         return Swal.fire({
           title : titulo,
@@ -22,9 +26,17 @@ export class NotificationService {
           confirmButtonText : 'Confirmar'
         });
       case MessageType.Success:
-        return Swal.fire('Mensagem sucesso! Swal.fire');
+        return Swal.fire({
+          title : titulo,
+          text : message,
+          confirmButtonText : 'OK'
+        });
       case MessageType.Info:
-        return Swal.fire('Mensagem sucesso! Swal.fire');
+        return Swal.fire({
+          title : titulo,
+          text : message,
+          confirmButtonText : 'OK'
+        });
     }
   }
   public message(Type : MessageType, titulo : string, message : string){

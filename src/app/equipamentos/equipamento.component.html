@@ -25,7 +25,8 @@
           <tr>
             <th class="w-25">Numero de série</th>
             <th class="w-25">Nome</th>
-            <th class="w-25">Nome</th>
+            <th class="w-25">Preço</th>
+            <th class="w-25">Data aquisição</th>
             <th class="w-25">Ações</th>
           </tr>
         </thead>
@@ -34,6 +35,7 @@
             <td>{{equipamento.numeroSerie}}</td>
             <td>{{equipamento.nome}}</td>
             <td>{{equipamento.precoAquisicao | currency:'BRL':'R$'}}</td>
+            <td>{{equipamento.dataFabricacao | date:'dd/MM/yyyy'}}</td>
             <td class="d-flex gap-2">
               <button
                 (click)="gravar(modal, equipamento)" 
@@ -85,12 +87,14 @@
       <div class="form-group d-flex justify-content-between align-items-baseline gap-2">
         <label for="precoAquisicao" class="form-label w-25">preço de aquisição</label>
         <input 
-          currencyMask
           tabindex="1" 
           formControlName="precoAquisicao"
           type="text" 
           class="from-control w-75" 
-          [options]="{ prefix: 'R$ ', thousands: '.', decimal: ',' }"
+          mask="separator.2"
+          prefix="R$ "
+          thousandSeparator=","
+          decimalMarker="."
           placeholder="Digite o preço do equipamento"/>
       </div>
       <div class="form-group d-flex justify-content-between align-items-baseline gap-2">

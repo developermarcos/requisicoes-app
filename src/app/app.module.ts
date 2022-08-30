@@ -10,7 +10,9 @@ import { PainelComponent } from './painel/painel.component';
 import { DepartamentoModule } from './departamentos/departamento.module';
 import { EquipamentoModule } from './equipamentos/equipamento.module';
 
+
 import { SharedModule } from './shared/shared.module';
+import { NgxMaskModule } from 'ngx-mask';
 
 @NgModule({
   declarations: [
@@ -25,7 +27,8 @@ import { SharedModule } from './shared/shared.module';
     NgbModule,
     DepartamentoModule,
     EquipamentoModule,
-    SharedModule
+    SharedModule,
+    NgxMaskModule.forRoot({dropSpecialCharacters : false}),
   ],
   providers: [],
   bootstrap: [AppComponent]
