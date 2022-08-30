@@ -10,36 +10,42 @@ export class NotificationService {
 
   constructor(private toastr : ToastrService) { }
 
-  public showModal(Type : MessageType, titulo : string, menssage : string){
+  public showModal(Type : MessageType, titulo : string, message : string){
     switch(Type){
       case MessageType.Alert:
         return Swal.fire('Mensagem sucesso! Swal.fire');
       case MessageType.Question:
         return Swal.fire({
           title : titulo,
+          text : message,
           showCancelButton: true,
           confirmButtonText : 'Confirmar'
         });
       case MessageType.Success:
         return Swal.fire('Mensagem sucesso! Swal.fire');
-      case MessageType.Warning:
+      case MessageType.Info:
         return Swal.fire('Mensagem sucesso! Swal.fire');
     }
   }
-  public message(Type : MessageType, message : string){
+  public message(Type : MessageType, titulo : string, message : string){
+    let menssageModel : any;
     switch(Type){
       case MessageType.Alert:
-        this.toastr.error(message);
+        menssageModel = this.toastr.error;
+        this.toastr.error(message, titulo);
         break;
       case MessageType.Question:
-        this.toastr.info(message);
+        this.toastr.info(message, titulo);
         break;
       case MessageType.Success:
-        this.toastr.success(message);
+        menssageModel = this.toastr.success;
+        this.toastr.success(message, titulo);
         break;
-      case MessageType.Warning:
-        this.toastr.warning(message);
+      case MessageType.Info:
+        this.toastr.info(message, titulo);
         break;
     }
+    
+    // menssageModel(message, titulo);
   }
 }

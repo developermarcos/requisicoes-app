@@ -1,6 +1,6 @@
 export enum MessageType{
   Success,
-  Warning,
+  Info,
   Alert,
   Question
 }

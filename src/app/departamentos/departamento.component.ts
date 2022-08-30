@@ -59,23 +59,32 @@ export class DepartamentoComponent implements OnInit {
     try{
       await this.modalService.open(modal).result;
       
-      if(departamento)
+      let message : string;
+      if(departamento){
         await this.departamentoService.editar(this.form.value);
-      else
+        message = "Editado com sucesso!";
+      }        
+      else{
         await this.departamentoService.inserir(this.form.value);
+        message = "Inserido com sucesso!";
+      }        
 
-      this.notification.message(MessageType.Success, "Departamento salvo com sucesso!");
+      this.notification.message(MessageType.Success, "Departamento", message);
 
     }catch(error){
-      console.log(error);
+      this.notification.message(MessageType.Info, "Departamento", `Nenhuma informação alterada.`);
     }
   }
 
   public async excluir(departamento : Departamento){
     const result = await this.notification.showModal(MessageType.Question,"Exclusão de departamento", `Deseja realmente excluir o departamento ${departamento.nome}`);
 
-    if(result.isConfirmed)
+    if(result.isConfirmed){
       this.departamentoService.excluir(departamento);
+      this.notification.message(MessageType.Success, "Departamento", `'${departamento.nome}' excluído com sucesso!`);
+      return;
+    }
+    this.notification.message(MessageType.Info, "Departamento", `'${departamento.nome}' não excluído`); 
   }
 
 }

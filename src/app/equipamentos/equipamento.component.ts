@@ -2,6 +2,8 @@ import { Component, OnInit, TemplateRef } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Observable } from 'rxjs';
+import { MessageType } from '../shared/notification/model/message-type.notification.enum';
+import { NotificationService } from '../shared/notification/notification.service';
 import { Equipamento } from './model/equipamento.model';
 import { EquipamentoService } from './services/departamento.service';
 
@@ -18,7 +20,8 @@ export class EquipamentoComponent implements OnInit {
   constructor(
     private equipamentoService : EquipamentoService,
     private modalService : NgbModal,
-    private fb : FormBuilder
+    private fb : FormBuilder,
+    private notification : NotificationService
   ) { }
 
   // GET
@@ -60,25 +63,38 @@ export class EquipamentoComponent implements OnInit {
   }
   public async gravar(modal : TemplateRef<any>, equipamento? : Equipamento){
     this.form.reset();
-    
     if(equipamento)
       this.form.setValue(equipamento);
 
     try{
       await this.modalService.open(modal, { size: 'lg' }).result;
       
-      if(equipamento)
+      let menssage : string;
+      if(equipamento){
         await this.equipamentoService.editar(this.form.value);
-      else
+        menssage = 'Editado com sucesso!';
+      }        
+      else{
         await this.equipamentoService.inserir(this.form.value);
+        menssage = 'Inserido com sucesso!';
+      }
 
-      console.log(`O departamento foi salvo com sucesso!`);
+      this.notification.message(MessageType.Success,"Equipamento",menssage);
 
-    }catch(error){
-      console.log(error);
+    }catch(_error){
+      this.notification.message(MessageType.Info, "Equipamento", `Nenhuma informação alterada.`);
     }
   }
-  public excluir(equipamento : Equipamento){
-    this.equipamentoService.excluir(equipamento);
+  public async excluir(equipamento : Equipamento){
+
+    const result = await this.notification.showModal(MessageType.Question,"Exclusão de Equipamento", `Deseja realmente excluir o equipamento '${equipamento.nome}'?`);
+
+    if(result.isConfirmed){
+      this.equipamentoService.excluir(equipamento);
+      this.notification.message(MessageType.Success, "Equipamento", `'${equipamento.nome}' excluído com sucesso!`);
+      return;
+    }
+
+    this.notification.message(MessageType.Info, "Equipamento", `Equipamento '${equipamento.nome}' não excluído`); 
   }
 }
