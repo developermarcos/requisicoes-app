@@ -77,4 +77,5 @@ export class DepartamentoComponent implements OnInit {
     if(result.isConfirmed)
       this.departamentoService.excluir(departamento);
   }
+
 }

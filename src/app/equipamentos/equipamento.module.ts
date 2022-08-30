@@ -6,6 +6,8 @@ import { EquipamentoComponent } from './equipamento.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ReactiveFormsModule } from '@angular/forms';
 
+import { NgxCurrencyModule } from 'ngx-currency';//Currency mask validation
+
 
 @NgModule({
   declarations: [
@@ -15,7 +17,8 @@ import { ReactiveFormsModule } from '@angular/forms';
     CommonModule,
     EquipamentoRoutingModule,
     NgbModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    NgxCurrencyModule
   ]
 })
 export class EquipamentoModule { }
