@@ -14,11 +14,18 @@ import { EquipamentoModule } from './equipamentos/equipamento.module';
 import { SharedModule } from './shared/shared.module';
 import { NgxMaskModule } from 'ngx-mask';
 
+import ptBr from '@angular/common/locales/pt';
+import { registerLocaleData } from '@angular/common';
+import { LOCALE_ID, DEFAULT_CURRENCY_CODE } from '@angular/core';
+import { FuncionarioComponent } from './funcionarios/funcionario.component';
+import { FuncionarioModule } from './funcionarios/funcionario.module';
+registerLocaleData(ptBr);
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
-    PainelComponent
+    PainelComponent,
+    FuncionarioComponent
   ],
   imports: [
     BrowserModule,
@@ -27,10 +34,14 @@ import { NgxMaskModule } from 'ngx-mask';
     NgbModule,
     DepartamentoModule,
     EquipamentoModule,
+    FuncionarioModule,
     SharedModule,
     NgxMaskModule.forRoot({dropSpecialCharacters : false}),
   ],
-  providers: [],
+  providers: [
+    {provide : LOCALE_ID, useValue : "pt"},
+    {provide : DEFAULT_CURRENCY_CODE, useValue : "BRL"}
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
