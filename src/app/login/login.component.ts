@@ -29,8 +29,9 @@ export class LoginComponent implements OnInit {
     });
     this.formRecuperacao = this.formBuilder.group({
       emailRecuperacao: new FormControl("")
-    })
+    });      
   }
+  
   get email() : AbstractControl | null{
     return this.form.get("email");
   }

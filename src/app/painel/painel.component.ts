@@ -19,6 +19,7 @@ export class PainelComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.usuarioLogado$ = this.authService.usuarioLogado
       .subscribe(usuario => this.emailUsuario = usuario?.email);
+
   }
 
   ngOnDestroy(): void {

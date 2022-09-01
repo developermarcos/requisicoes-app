@@ -5,7 +5,8 @@ export class Funcionario{
   nome : string;
   funcao : string;
   email : string;
-  departamento : Departamento
+  departamentoId : string;
+  departamento? : Departamento;
 
   constructor(nome : string, funcao : string, email : string, departamento : Departamento){
     this.nome = nome;

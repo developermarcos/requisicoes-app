@@ -25,7 +25,6 @@ export class NavbarComponent implements OnInit {
   sair() : void{
     this.authService.logout()
     .then(() => this.router.navigate(['/login']));
-    console.log("sair");
   }
 
 }
