@@ -67,40 +67,56 @@
   </div>
   <form [formGroup]="form" (ngSubmit)="modal.close('gravar')">
     <div class="modal-body">
-      <div class="mb-3 row form-group">
+      <div class="mb-3 row form-group position-relative">
         <label for="numeroSerie" class="col-sm-2 col-form-label">Nome</label>
         <div class="col-sm-10">
           <input 
+          [ngClass]="(nome?.touched && nome?.invalid)? 'is-invalid' : ''"
           tabindex="1" 
           formControlName="nome"
           type="text" 
           class="form-control" 
           placeholder="Digite o nome do funcionário">
         </div>
+        <div *ngIf="nome?.touched && nome?.invalid" class="col-sm-10 offset-sm-2 invalid-tooltip d-block">
+          <span *ngIf="nome?.errors?.['required']">Nome obrigatório.</span>
+          <span *ngIf="nome?.errors?.['minlength']">Nome deve conter no mínino 3 caracteres.</span>
+          <span *ngIf="nome?.errors?.['pattern']">Nome não deve conter caracteres especiais.</span>
+        </div>
       </div>
-      <div class="mb-3 row form-group">
+      <div class="mb-3 row form-group position-relative">
         <label for="numeroSerie" class="col-sm-2 col-form-label">Função</label>
         <div class="col-sm-10">
           <input 
+          [ngClass]="(funcao?.touched && funcao?.invalid)? 'is-invalid' : ''"
           tabindex="2" 
           formControlName="funcao"
           type="text" 
           class="form-control" 
           placeholder="Digite a função do funcionário">
         </div>
+        <div *ngIf="funcao?.touched && funcao?.invalid" class="col-sm-10 offset-sm-2 invalid-tooltip d-block">
+          <span *ngIf="funcao?.errors?.['required']">Função obrigatório.</span>
+          <span *ngIf="funcao?.errors?.['minlength']">Função deve conter no mínino 3 caracteres.</span>
+        </div>
       </div>
-      <div class="mb-3 row form-group">
+      <div class="mb-3 row form-group position-relative">
         <label for="numeroSerie" class="col-sm-2 col-form-label">Email</label>
         <div class="col-sm-10">
           <input 
+          [ngClass]="(email?.touched && email?.invalid)? 'is-invalid' : ''"
           tabindex="3" 
           formControlName="email"
           type="text" 
           class="form-control" 
           placeholder="Digite o email do funcionário">
         </div>
+        <div *ngIf="email?.touched && email?.invalid" class="col-sm-10 offset-sm-2 invalid-tooltip d-block">
+          <span *ngIf="email?.errors?.['required']">Email obrigatório.</span>
+          <span *ngIf="email?.errors?.['email']">Email com formato inválido.</span>
+        </div>
       </div>
-      <div class="mb-3 form-group row">
+      <div class="mb-3 form-group row position-relative">
         <label for="departamentoId" class="col-sm-2 col-form-label">Departamentos</label>
         <div class="col-sm-10">
           <ng-select formControlName="departamentoId" [clearable]="false" [searchable]="false">
@@ -111,12 +127,15 @@
             </ng-option>
           </ng-select>
         </div>
+        <div *ngIf="departamentoId?.touched && departamentoId?.invalid" class="col-sm-10 offset-sm-2 invalid-tooltip d-block">
+          <span *ngIf="departamentoId?.errors?.['required']">Departamento obrigatório.</span>
+        </div>
       </div>
       
     </div>
     <div class="modal-footer">
       <button type="button" class="btn btn-outline-dark col-md-3" (click)="modal.dismiss('fechar')">Cancelar</button>
-      <button type="submit" class="btn btn-primary col-md-3">Gravar</button>
+      <button type="submit" class="btn btn-primary col-md-3" [disabled]="this.form.invalid">Gravar</button>
     </div>
   </form>
 </ng-template>

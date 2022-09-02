@@ -1,5 +1,5 @@
 import { Component, OnInit, TemplateRef } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Observable } from 'rxjs';
@@ -35,10 +35,29 @@ export class FuncionarioComponent implements OnInit {
 
     this.form = this.fb.group({
       id: new FormControl(""),
-      nome : new FormControl(""),
-      funcao : new FormControl(""),
-      email : new FormControl(""),
-      departamentoId : new FormControl(""),
+      nome : new FormControl(
+        "", 
+        [
+          Validators.required,
+          Validators.minLength(3),
+          Validators.pattern("[A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ ]+$")//Expressão apenas letras
+        ]
+      ),
+      funcao : new FormControl(
+        "", 
+        [
+          Validators.required,
+          Validators.minLength(3),
+        ]
+      ),
+      email : new FormControl(
+        "", 
+        [
+          Validators.required,
+          Validators.email
+        ]
+      ),
+      departamentoId : new FormControl("", [Validators.required]),
       departamento : new FormControl("")
     });
   }  
@@ -58,6 +77,14 @@ export class FuncionarioComponent implements OnInit {
 
   get funcao(){
     return this.form.get('funcao');
+  }
+
+  get email(){
+    return this.form.get('email');
+  }
+
+  get departamentoId(){
+    return this.form.get('departamentoId');
   }
   get departamento(){
     return this.form.get('departamento');
@@ -80,18 +107,20 @@ export class FuncionarioComponent implements OnInit {
 
     try{
       await this.modalService.open(modal, { size: 'lg' }).result;
-      
-      let menssage : string;
+
+      if(!this.form.dirty || this.form.invalid){
+        this.notification.message(MessageType.Success,"Funcionário","Preencha todos os campos.");
+        return;
+      }
+
       if(funcionario){
         await this.funcionarioService.editar(this.form.value);
-        menssage = 'Editado com sucesso!';
+        this.notification.message(MessageType.Success,"Funcionário", "Editado com sucesso!");
       }        
       else{
         await this.funcionarioService.inserir(this.form.value);
-        menssage = 'Inserido com sucesso!';
+        this.notification.message(MessageType.Success,"Funcionário", "Inserido com sucesso!");
       }
-
-      this.notification.message(MessageType.Success,"Funcionário",menssage);
 
     }catch(_error){
       this.notification.message(MessageType.Info, "Funcionário", `Nenhuma informação alterada.`);
