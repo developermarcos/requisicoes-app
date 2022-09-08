@@ -1,5 +1,5 @@
 import { Component, OnInit, TemplateRef } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { map, Observable, Subscription } from 'rxjs';
 import { Departamento } from '../departamentos/models/departamento.model';
@@ -16,8 +16,7 @@ import { AuthenticationService } from '../shared/auth/authentication.service';
 
 @Component({
   selector: 'app-requisicao',
-  templateUrl: './requisicao.component.html',
-  styleUrls: ['./requisicao.component.css']
+  templateUrl: './requisicao.component.html'
 })
 export class RequisicaoComponent implements OnInit {
 
@@ -46,31 +45,31 @@ export class RequisicaoComponent implements OnInit {
     return this.id?.value ? "Atualização" : "Cadastro";
   }
 
-  get id(){
+  get id() : AbstractControl | null{
     return this.form.get('id');
   }
-  get descricao(){
+  get descricao() : AbstractControl | null{
     return this.form.get('descricao');
   }
-  get funcionarioId(){
+  get funcionarioId() : AbstractControl | null{
     return this.form.get('funcionarioId');
   }
-  get funcionario(){
+  get funcionario() : AbstractControl | null{
     return this.form.get('funcionario');
   }
   get departamentoId(){
     return this.form.get('departamentoId');
   }
-  get departamento(){
+  get departamento() : AbstractControl | null{
     return this.form.get('departamento');
   }
-  get dataAbertura(){
+  get dataAbertura() : AbstractControl | null{
     return this.form.get('dataAbertura');
   }
-  get equipamentoId(){
+  get equipamentoId() : AbstractControl | null{
     return this.form.get('equipamentoId');
   }
-  get equipamento(){
+  get equipamento() : AbstractControl | null{
     return this.form.get('equipamento');
   }
 
@@ -85,60 +84,78 @@ export class RequisicaoComponent implements OnInit {
     this.form = this.fb.group({
       id: new FormControl(""),
       descricao: new FormControl(""),
+      dataAbertura: new FormControl(""),
+
       funcionarioId : new FormControl(""),
       funcionario : new FormControl(""),
-      departamentoId : new FormControl("", [Validators.required]),
+
+      departamentoId : new FormControl(""),
       departamento : new FormControl(""),
-      dataAbertura: new FormControl(""),
+
       equipamentoId : new FormControl(""),
       equipamento : new FormControl(""),
     });
     
-    this.usuarioLogado$ = this.authService.usuarioLogado
-      .subscribe(usuario => {
+    this.usuarioLogado$ = this.authService.usuarioLogado.subscribe(usuario => {
         this.emailUsuario = usuario?.email!
-
+        
         this.funcionarioService.selecionarPorEmail(this.emailUsuario)
         .subscribe(funcionarioEncotrado => this.idFuncionarioLogado = funcionarioEncotrado.id);
-      });
-
-    
+    });    
   }
 
   public async gravar(modal : TemplateRef<any>, requisicao? : Requisicao){
     this.form.reset();
+
+    this.configurarForm();
+
     if(requisicao){
-      this.form.setValue(requisicao);
+      this.SetarValoresForm(requisicao);
     }
 
     try{
       await this.modalService.open(modal, { size: 'lg' }).result;
 
       if(!this.form.dirty || this.form.invalid){
-        this.notification.message(MessageType.Success,"Requisição","Preencha todos os campos.");
+        this.notification.message(MessageType.Success,"Requisição","Formulário invalido, preencha todos os campos corretamente.");
         return;
       }
 
       if(requisicao){
         await this.requisicaoService.editar(this.form.value);
+        
         this.notification.message(MessageType.Success,"Requisição", "Editado com sucesso!");
       }        
       else{
-        const requisicaoGravar : Requisicao = this.form.value;
-
-        requisicaoGravar.dataAbertura = new Date().toLocaleDateString();
-
-        requisicaoGravar.funcionarioId = this.idFuncionarioLogado;
-        
-        await this.requisicaoService.inserir(requisicaoGravar);
+        await this.requisicaoService.inserir(this.form.value);
         
         this.notification.message(MessageType.Success,"Requisição", "Inserido com sucesso!");
       }
-
     }catch(_error){
       this.notification.message(MessageType.Info, "Requisição", `Nenhuma informação alterada.`);
     }
   }
+  private SetarValoresForm(requisicao: Requisicao) {
+    const departamento = requisicao.departamento ? requisicao.departamento : null;
+    const funcionario = requisicao.funcionario ? requisicao.funcionario : null;
+    const equipamento = requisicao.equipamento ? requisicao.equipamento : null;
+
+    const requisicaoCompleta = {
+      ...requisicao,
+      departamento,
+      funcionario,
+      equipamento
+    };
+
+    this.form.setValue(requisicaoCompleta);
+  }
+
+  private configurarForm() {
+    this.form.get("dataAbertura")?.setValue(new Date());
+    this.form.get("equipamentoid")?.setValue(null);
+    this.form.get("funcionarioId")?.setValue(this.idFuncionarioLogado);
+  }
+
   public async excluir(requisicao : Requisicao){
     const result = await this.notification.showModal(MessageType.Question,"Exclusão de requisições", `Deseja realmente excluir a requisicao '${requisicao.descricao}'?`);
 

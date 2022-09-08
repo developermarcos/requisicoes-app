@@ -33,11 +33,11 @@
         </thead>
         <tbody class="">
           <tr *ngFor="let requisicao of (requisicoes$ | async)">
-            <td>{{ requisicao.dataAbertura}}</td>
+            <td>{{ requisicao.dataAbertura.toDate() | date:'dd/MM/yyyy'}}</td>
             <td>{{ requisicao.departamento?.nome }}</td>
-            <td>{{ requisicao.funcionario?.nome ? requisicao.funcionario?.nome : 'Não encontrado' }}</td>
+            <td>{{ requisicao.funcionario ? requisicao.funcionario?.nome : 'Não encontrado' }}</td>
             <td>{{ requisicao.descricao }}</td>
-            <td>{{ requisicao.equipamento?.nome ? requisicao.equipamento?.nome : 'Não selecionado' }}</td>
+            <td>{{ requisicao.equipamento ? requisicao.equipamento?.nome : 'Não selecionado' }}</td>
             <td class="d-flex gap-2">
               <button
                 (click)="gravar(modal, requisicao)" 
