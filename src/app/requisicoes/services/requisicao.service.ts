@@ -26,21 +26,19 @@ export class RequisicaoService {
             .collection<Departamento>("departamentos")
             .doc(requisicao.departamentoId)
             .valueChanges()
-            .subscribe(x => requisicao.departamento = x as Departamento);
-          }),
-          requisicoes.forEach(requisicao => {
-            this.firestore
-            .collection<Equipamento>("equipamentos")
-            .doc(requisicao.equipamentoId)
-            .valueChanges()
-            .subscribe(x => requisicao.equipamento = x as Equipamento);
-          }),
-          requisicoes.forEach(requisicao => {
-            this.firestore
+            .subscribe(x => requisicao.departamento = x);
+          this.firestore
             .collection<Funcionario>("funcionarios")
             .doc(requisicao.funcionarioId)
             .valueChanges()
             .subscribe(x => requisicao.funcionario = x);
+          if(requisicao.equipamentoId){
+            this.firestore
+            .collection<Equipamento>("equipamentos")
+            .doc(requisicao.equipamentoId)
+            .valueChanges()
+            .subscribe(x => requisicao.equipamento = x);
+          }
           });
           return requisicoes;
         })

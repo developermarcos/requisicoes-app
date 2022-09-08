@@ -30,9 +30,9 @@ export class RequisicaoComponent implements OnInit {
   idFuncionarioLogado : string;
 
   constructor(
-    private requisicaoService : RequisicaoService,
     private modalService : NgbModal,
     private fb : FormBuilder,
+    private requisicaoService : RequisicaoService,
     private notification : NotificationService,
     private departamentoService : DepartamentoService,
     private funcionarioService : FuncionarioService,
@@ -121,18 +121,16 @@ export class RequisicaoComponent implements OnInit {
         return;
       }
 
-      if(requisicao){
-        await this.requisicaoService.editar(this.form.value);
-        
-        this.notification.message(MessageType.Success,"Requisição", "Editado com sucesso!");
-      }        
-      else{
+      if(requisicao)
+        await this.requisicaoService.editar(this.form.value);        
+      else
         await this.requisicaoService.inserir(this.form.value);
         
-        this.notification.message(MessageType.Success,"Requisição", "Inserido com sucesso!");
-      }
-    }catch(_error){
-      this.notification.message(MessageType.Info, "Requisição", `Nenhuma informação alterada.`);
+      this.notification.message(MessageType.Success,"Requisição", "Registro salvo com sucesso!");
+      
+    }catch(error){
+      if(error != "fechar" && error != "0" && error != "1")
+        this.notification.message(MessageType.Info, "Requisição", `Nenhuma informação alterada.`);
     }
   }
   private SetarValoresForm(requisicao: Requisicao) {
