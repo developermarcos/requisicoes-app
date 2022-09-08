@@ -1,5 +1,5 @@
 import { Component, OnInit, TemplateRef } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Observable } from 'rxjs';
 import { MessageType } from '../shared/notification/model/message-type.notification.enum';
@@ -29,8 +29,19 @@ export class DepartamentoComponent implements OnInit {
 
     this.form = this.fb.group({
       id: new FormControl(""),
-      nome : new FormControl(""),
-      telefone : new FormControl("")
+      nome : new FormControl(
+        "", 
+        [
+          Validators.required,
+          Validators.minLength(3),
+        ]
+      ),
+      telefone : new FormControl(
+        "", 
+        [
+          Validators.required,
+        ]
+      )
     });
   }
 
@@ -58,18 +69,20 @@ export class DepartamentoComponent implements OnInit {
 
     try{
       await this.modalService.open(modal).result;
+
+      if(!this.form.dirty || this.form.invalid){
+        this.notification.message(MessageType.Success,"Departamento","Preencha todos os campos.");
+        return;
+      }
       
-      let message : string;
       if(departamento){
         await this.departamentoService.editar(this.form.value);
-        message = "Editado com sucesso!";
+        this.notification.message(MessageType.Success, "Departamento", "Editado com sucesso!");
       }        
       else{
         await this.departamentoService.inserir(this.form.value);
-        message = "Inserido com sucesso!";
-      }        
-
-      this.notification.message(MessageType.Success, "Departamento", message);
+        this.notification.message(MessageType.Success, "Departamento", "Inserido com sucesso!");
+      }              
 
     }catch(error){
       this.notification.message(MessageType.Info, "Departamento", `Nenhuma informação alterada.`);

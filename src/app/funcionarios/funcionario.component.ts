@@ -1,10 +1,12 @@
 import { Component, OnInit, TemplateRef } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Observable } from 'rxjs';
 import { Departamento } from '../departamentos/models/departamento.model';
 import { DepartamentoService } from '../departamentos/services/departamento.service';
+import { AuthenticationService } from '../shared/auth/authentication.service';
 import { MessageType } from '../shared/notification/model/message-type.notification.enum';
 import { NotificationService } from '../shared/notification/notification.service';
 import { Funcionario } from './models/funcionario.model';
@@ -26,7 +28,8 @@ export class FuncionarioComponent implements OnInit {
     private modalService : NgbModal,
     private fb : FormBuilder,
     private notification : NotificationService,
-    private departamentoService : DepartamentoService
+    private departamentoService : DepartamentoService,
+    private authService : AuthenticationService,
   ) { }
 
   ngOnInit(): void {
@@ -34,31 +37,40 @@ export class FuncionarioComponent implements OnInit {
     this.departamentos$ = this.departamentoService.selecionarTodos();
 
     this.form = this.fb.group({
-      id: new FormControl(""),
-      nome : new FormControl(
+      funcionario: new FormGroup({
+        id: new FormControl(""),
+        nome : new FormControl(
+          "", 
+          [
+            Validators.required,
+            Validators.minLength(3),
+            Validators.pattern("[A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ ]+$")//Expressão apenas letras
+          ]
+        ),
+        funcao : new FormControl(
+          "", 
+          [
+            Validators.required,
+            Validators.minLength(3),
+          ]
+        ),
+        email : new FormControl(
+          "", 
+          [
+            Validators.required,
+            Validators.email
+          ]
+        ),
+        departamentoId : new FormControl("", [Validators.required]),
+        departamento : new FormControl("")
+      }),
+      senha: new FormControl(
         "", 
         [
           Validators.required,
-          Validators.minLength(3),
-          Validators.pattern("[A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ ]+$")//Expressão apenas letras
+          Validators.minLength(6),
         ]
-      ),
-      funcao : new FormControl(
-        "", 
-        [
-          Validators.required,
-          Validators.minLength(3),
-        ]
-      ),
-      email : new FormControl(
-        "", 
-        [
-          Validators.required,
-          Validators.email
-        ]
-      ),
-      departamentoId : new FormControl("", [Validators.required]),
-      departamento : new FormControl("")
+      )
     });
   }  
   
@@ -67,27 +79,30 @@ export class FuncionarioComponent implements OnInit {
     return this.id?.value ? "Atualização" : "Cadastro";
   }
 
-  get id(){
-    return this.form.get('id');
+  get id() : AbstractControl | null{
+    return this.form.get('funcionario.id');
   }
 
-  get nome(){
-    return this.form.get('nome');
+  get nome() : AbstractControl | null{
+    return this.form.get('funcionario.nome');
   }
 
-  get funcao(){
-    return this.form.get('funcao');
+  get funcao() : AbstractControl | null{
+    return this.form.get('funcionario.funcao');
   }
 
-  get email(){
-    return this.form.get('email');
+  get email() : AbstractControl | null{
+    return this.form.get('funcionario.email');
   }
 
   get departamentoId(){
-    return this.form.get('departamentoId');
+    return this.form.get('funcionario.departamentoId');
   }
-  get departamento(){
-    return this.form.get('departamento');
+  get departamento() : AbstractControl | null{
+    return this.form.get('funcionario.departamento');
+  }
+  get senha() : AbstractControl | null{
+    return this.form.get('senha');
   }
   // END GET
 
@@ -101,7 +116,7 @@ export class FuncionarioComponent implements OnInit {
         departamento
       }
 
-      this.form.setValue(funcionarioCompleto);
+      this.form.get("funcionario")?.setValue(funcionarioCompleto);
     }
       
 
@@ -114,12 +129,20 @@ export class FuncionarioComponent implements OnInit {
       }
 
       if(funcionario){
-        await this.funcionarioService.editar(this.form.value);
+        await this.funcionarioService.editar(this.form.get("funcionario")?.value);
         this.notification.message(MessageType.Success,"Funcionário", "Editado com sucesso!");
       }        
       else{
-        await this.funcionarioService.inserir(this.form.value);
+        
+        const usuarioAtual = this.authService.getUsuario();
+
+        await this.authService.cadastrar(this.email?.value, this.senha?.value);
+        
+        await this.funcionarioService.inserir(this.form.get("funcionario")?.value);
+
         this.notification.message(MessageType.Success,"Funcionário", "Inserido com sucesso!");
+        
+        await this.authService.atualizarUsuario(await usuarioAtual);
       }
 
     }catch(_error){

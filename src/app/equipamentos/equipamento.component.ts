@@ -1,5 +1,5 @@
 import { Component, OnInit, TemplateRef } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Observable } from 'rxjs';
 import { MessageType } from '../shared/notification/model/message-type.notification.enum';
@@ -55,10 +55,29 @@ export class EquipamentoComponent implements OnInit {
 
     this.form = this.fb.group({
       id: new FormControl(""),
-      numeroSerie : new FormControl(""),
-      nome : new FormControl(""),
-      precoAquisicao : new FormControl(""),
-      dataFabricacao : new FormControl("")
+      numeroSerie : new FormControl(
+        "", 
+        [
+          Validators.required,
+        ]
+      ),
+      nome : new FormControl(
+        "", 
+        [
+          Validators.required,
+          Validators.minLength(3),
+        ]
+      ),
+      precoAquisicao : new FormControl("", 
+      [
+        Validators.required
+      ]),
+      dataFabricacao : new FormControl(
+        "", 
+        [
+          Validators.required,
+        ]
+      )
     });
   }
   public async gravar(modal : TemplateRef<any>, equipamento? : Equipamento){
@@ -68,6 +87,11 @@ export class EquipamentoComponent implements OnInit {
 
     try{
       await this.modalService.open(modal, { size: 'lg' }).result;
+
+      if(!this.form.dirty || this.form.invalid){
+        this.notification.message(MessageType.Alert,"Equipamento","Preencha todos os campos.");
+        return;
+      }
       
       let menssage : string;
       if(equipamento){
