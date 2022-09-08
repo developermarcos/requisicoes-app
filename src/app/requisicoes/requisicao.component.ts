@@ -76,7 +76,6 @@ export class RequisicaoComponent implements OnInit {
   // END GET
 
   ngOnInit(): void {
-    this.requisicoes$ = this.requisicaoService.selecionarTodos();
     this.funcionarios$ = this.funcionarioService.selecionarTodos();
     this.departamentos$ = this.departamentoService.selecionarTodos();
     this.equipamentos$ = this.equipamentoService.selecionarTodos();
@@ -98,9 +97,13 @@ export class RequisicaoComponent implements OnInit {
     
     this.usuarioLogado$ = this.authService.usuarioLogado.subscribe(usuario => {
         this.emailUsuario = usuario?.email!
-        
+
         this.funcionarioService.selecionarPorEmail(this.emailUsuario)
-        .subscribe(funcionarioEncotrado => this.idFuncionarioLogado = funcionarioEncotrado.id);
+        .subscribe(funcionarioEncotrado => {
+          this.idFuncionarioLogado = funcionarioEncotrado.id
+          this.requisicoes$ = this.requisicaoService.selecionarRequisicoesPorFuncionarioId(this.idFuncionarioLogado);
+        });
+
     });    
   }
 

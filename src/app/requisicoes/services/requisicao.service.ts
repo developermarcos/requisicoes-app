@@ -63,4 +63,13 @@ export class RequisicaoService {
   public async excluir(registro : Requisicao) : Promise<void>{
     return this.registros.doc(registro.id).delete();
   }
+
+  public selecionarRequisicoesPorFuncionarioId(funcionarioId : string){
+    return this.selecionarTodos()
+    .pipe(
+      map(requisicoes => {
+        return requisicoes.filter(req => req.funcionarioId === funcionarioId);
+      })
+    )
+  }
 }
