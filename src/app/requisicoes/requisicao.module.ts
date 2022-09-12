@@ -7,11 +7,15 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ReactiveFormsModule } from '@angular/forms';
 import { NgxMaskModule } from 'ngx-mask';
 import { NgSelectModule } from '@ng-select/ng-select';
+import { RequisicaoFuncionarioComponent } from './requisicao-funcionario/requisicao-funcionario.component';
+import { RequisicoesDepartamentoComponent } from './requisicoes-departamento/requisicoes-departamento.component';
 
 
 @NgModule({
   declarations: [
-    RequisicaoComponent
+    RequisicaoComponent,
+    RequisicaoFuncionarioComponent,
+    RequisicoesDepartamentoComponent
   ],
   imports: [
     CommonModule,

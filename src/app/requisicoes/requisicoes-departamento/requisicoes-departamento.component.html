@@ -1,0 +1,117 @@
+<div class="container">
+  <div class="row bg-light shadow p-3 mb-5 bg-white rounded">
+    <div class="col-12 my-4">
+      <div class="text-center text-md-start">
+        <h1 class="fw-semibold text-primary">Requisicoes</h1>
+        <h6 *ngIf="departamentoNome" class="pb-3 pt-1">Departamento: <span class="bg-primary text-white py-1 px-2 rounded">{{departamentoNome}}</span></h6>
+      </div>
+      <div class="d-flex justify-content-between">
+        <a
+          role="button"
+          class="btn btn-outline-primary col-md-2"
+          routerLink="/painel">
+          <i class="pi pi-sign-out me-2 rotated-180"></i>Voltar
+        </a>
+      </div>
+    </div>
+    <div class="col-md-12">
+      <table class="table table-light table-striped table-hover">
+        <thead class="thead-dark">
+          <tr>
+            <th class="">Data abertura</th>
+            <th class="">Última Atualização</th>
+            <th class="">Descrição</th>
+            <th class="">Departamento</th>
+            <th class="">Status</th>
+            <th class="">Movimentações</th>
+            <th class="">Ações</th>
+          </tr>
+        </thead>
+        <tbody class="">
+          <tr *ngFor="let requisicao of (requisicoes$ | async)">
+            <td>{{ requisicao.dataAbertura.toDate() | date:'dd/MM/yyyy'}}</td>
+            <td>Ultima movimentação</td>
+            <td>{{ requisicao.descricao }}</td>
+            <td>{{ requisicao.departamento ? requisicao.departamento.nome : "Não encontrado" }}</td>
+            <td>{{ requisicao.status }}</td>
+            <td>Qtd. movimentações</td>            
+            <td class="d-flex gap-2">
+              <button
+                type="button"
+                class="btn btn-success" 
+                title="Editar">
+                <i class="pi pi-pencil"></i>
+              </button>
+              <button 
+                type="button"
+                class="btn btn-danger" 
+                title="Excluir">
+                <i class="pi pi-trash"></i>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- <ng-template #modal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">{{tituloModal}} de equipamento</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('fechar')"></button>
+  </div>
+  <form [formGroup]="form" (ngSubmit)="modal.close('gravar')">
+    <div class="modal-body">
+      <div class="mb-3 form-group row position-relative">
+        <label for="departamentoId" class="col-sm-2 col-form-label">Departamentos</label>
+        <div class="col-sm-10">
+          <ng-select formControlName="departamentoId" [clearable]="false" [searchable]="false">
+            <ng-option 
+              *ngFor="let departamento of (departamentos$ | async)" 
+              [value]="departamento.id">
+              {{departamento.nome}}
+            </ng-option>
+          </ng-select>
+        </div>
+        <div *ngIf="departamentoId?.touched && departamentoId?.invalid" class="col-sm-10 offset-sm-2 invalid-tooltip d-block">
+          <span *ngIf="departamentoId?.errors?.['required']">Departamento obrigatório.</span>
+        </div>
+      </div>
+      <div class="mb-3 row form-group position-relative">
+        <label for="descricao" class="col-sm-2 col-form-label">Descrição</label>
+        <div class="col-sm-10">
+          <textarea name="descricao" id="" rows="4"
+          [ngClass]="(descricao?.touched && descricao?.invalid)? 'is-invalid' : ''"
+          tabindex="1" 
+          formControlName="descricao"
+          type="textarea" 
+          class="form-control" 
+          placeholder="Digite a descrição "></textarea>
+        </div>
+        <div *ngIf="descricao?.touched && descricao?.invalid" class="col-sm-10 offset-sm-2 invalid-tooltip d-block">
+          <span *ngIf="descricao?.errors?.['required']">Descrição é obrigatória.</span>
+        </div>
+      </div>
+      <div class="mb-3 form-group row position-relative">
+        <label for="equipamentoId" class="col-sm-2 col-form-label">Equipamento</label>
+        <div class="col-sm-10">
+          <ng-select formControlName="equipamentoId" [clearable]="false" [searchable]="false">
+            <ng-option 
+              *ngFor="let equipamento of (equipamentos$ | async)" 
+              [value]="equipamento.id">
+              {{equipamento.nome}}
+            </ng-option>
+          </ng-select>
+        </div>
+        <div *ngIf="equipamentoId?.touched && equipamentoId?.invalid" class="col-sm-10 offset-sm-2 invalid-tooltip d-block">
+          <span *ngIf="equipamentoId?.errors?.['required']">Equipamento obrigatório.</span>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-outline-dark col-md-3" (click)="modal.dismiss('fechar')">Cancelar</button>
+      <button type="submit" class="btn btn-primary col-md-3" [disabled]="this.form.invalid">Gravar</button>
+    </div>
+  </form>
+</ng-template> -->

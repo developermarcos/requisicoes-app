@@ -61,4 +61,16 @@ export class FuncionarioService {
       })
     )
   }
+
+  public selecionarDepartamentoIdFuncionarioPorFuncionarioId(funcionarioId : string){
+    return this.firestore.collection<Funcionario>("funcionarios", ref => {
+      return ref.where("id", "==", funcionarioId);
+    }).valueChanges()
+    .pipe(
+      take(1),
+      map((funcionarios : Funcionario[]) => {
+        return funcionarios[0].departamentoId;
+      })
+    )
+  }
 }

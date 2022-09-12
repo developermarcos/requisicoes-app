@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/compat/firestore';
-import { Observable } from 'rxjs';
+import { map, Observable, take } from 'rxjs';
 import { Departamento } from '../models/departamento.model';
 
 @Injectable({
@@ -14,7 +14,7 @@ export class DepartamentoService {
     this.registros = this.firestore.collection<Departamento>('departamentos');
   }
 
-  public selecionarTodos() : Observable<Departamento []>{
+  public selecionarTodos() : Observable<Departamento[]>{
     return this.registros.valueChanges();
   }
 
@@ -35,5 +35,18 @@ export class DepartamentoService {
 
   public excluir(departamento : Departamento) : Promise<void>{
     return this.registros.doc(departamento.id).delete();
+  }
+
+  public selecionarPorId(id : string){
+    
+    return this.firestore.collection<Departamento>("departamentos", ref => {
+      return ref.where("id", "==", id);
+    }).valueChanges()
+    .pipe(
+      take(1),
+      map((departamentos : Departamento[]) => {
+        return departamentos[0];
+      })
+    )
   }
 }
