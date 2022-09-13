@@ -9,13 +9,15 @@ import { NgxMaskModule } from 'ngx-mask';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { RequisicaoFuncionarioComponent } from './requisicao-funcionario/requisicao-funcionario.component';
 import { RequisicoesDepartamentoComponent } from './requisicoes-departamento/requisicoes-departamento.component';
+import { DetalhesComponent } from './detalhes/detalhes.component';
 
 
 @NgModule({
   declarations: [
     RequisicaoComponent,
     RequisicaoFuncionarioComponent,
-    RequisicoesDepartamentoComponent
+    RequisicoesDepartamentoComponent,
+    DetalhesComponent
   ],
   imports: [
     CommonModule,

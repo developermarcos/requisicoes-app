@@ -23,30 +23,32 @@
             <th class="">Descrição</th>
             <th class="">Departamento</th>
             <th class="">Status</th>
-            <th class="">Movimentações</th>
+            <th class="">Ultima Atualização</th>
             <th class="">Ações</th>
           </tr>
         </thead>
         <tbody class="">
           <tr *ngFor="let requisicao of (requisicoes$ | async)">
-            <td>{{ requisicao.dataAbertura.toDate() | date:'dd/MM/yyyy'}}</td>
+            <td>{{ requisicao.dataAbertura.toDate() | date:'dd/MM/yyyy hh:mm'}}</td>
             <td>Ultima movimentação</td>
             <td>{{ requisicao.descricao }}</td>
             <td>{{ requisicao.departamento ? requisicao.departamento.nome : "Não encontrado" }}</td>
             <td>{{ requisicao.status }}</td>
-            <td>Qtd. movimentações</td>            
+            <td>{{ requisicao.ultimaAtualizacao.toDate() | date:'dd/MM/yyyy hh:mm' }}</td>            
             <td class="d-flex gap-2">
               <button
+                (click)="gravar(modal, requisicao)"
                 type="button"
-                class="btn btn-success" 
+                class="btn btn-primary" 
                 title="Editar">
-                <i class="pi pi-pencil"></i>
+                <i class="pi pi-check-square"></i>
               </button>
               <button 
+                [routerLink]="['/requisicoes', requisicao.id]"
                 type="button"
-                class="btn btn-danger" 
+                class="btn btn-outline-primary" 
                 title="Excluir">
-                <i class="pi pi-trash"></i>
+                <i class="pi pi-tags"></i>
               </button>
             </td>
           </tr>
@@ -56,56 +58,57 @@
   </div>
 </div>
 
-<!-- <ng-template #modal let-modal>
+<ng-template #modal let-modal>
   <div class="modal-header">
-    <h4 class="modal-title" id="modal-basic-title">{{tituloModal}} de equipamento</h4>
+    <h4 class="modal-title" id="modal-basic-title">Requisição status</h4>
     <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('fechar')"></button>
   </div>
   <form [formGroup]="form" (ngSubmit)="modal.close('gravar')">
     <div class="modal-body">
       <div class="mb-3 form-group row position-relative">
-        <label for="departamentoId" class="col-sm-2 col-form-label">Departamentos</label>
-        <div class="col-sm-10">
-          <ng-select formControlName="departamentoId" [clearable]="false" [searchable]="false">
-            <ng-option 
-              *ngFor="let departamento of (departamentos$ | async)" 
-              [value]="departamento.id">
-              {{departamento.nome}}
-            </ng-option>
-          </ng-select>
-        </div>
-        <div *ngIf="departamentoId?.touched && departamentoId?.invalid" class="col-sm-10 offset-sm-2 invalid-tooltip d-block">
-          <span *ngIf="departamentoId?.errors?.['required']">Departamento obrigatório.</span>
-        </div>
-      </div>
-      <div class="mb-3 row form-group position-relative">
-        <label for="descricao" class="col-sm-2 col-form-label">Descrição</label>
-        <div class="col-sm-10">
-          <textarea name="descricao" id="" rows="4"
-          [ngClass]="(descricao?.touched && descricao?.invalid)? 'is-invalid' : ''"
-          tabindex="1" 
-          formControlName="descricao"
-          type="textarea" 
-          class="form-control" 
-          placeholder="Digite a descrição "></textarea>
-        </div>
-        <div *ngIf="descricao?.touched && descricao?.invalid" class="col-sm-10 offset-sm-2 invalid-tooltip d-block">
-          <span *ngIf="descricao?.errors?.['required']">Descrição é obrigatória.</span>
+        <label for="departamentoId" class="col-sm-3 col-form-label">Departamentos</label>
+        <div class="col-sm-9">
+          <input 
+            disabled
+            tabindex="2" 
+            type="text" 
+            class="form-control"
+            value={{departamentoNome}}>
         </div>
       </div>
       <div class="mb-3 form-group row position-relative">
-        <label for="equipamentoId" class="col-sm-2 col-form-label">Equipamento</label>
-        <div class="col-sm-10">
-          <ng-select formControlName="equipamentoId" [clearable]="false" [searchable]="false">
-            <ng-option 
-              *ngFor="let equipamento of (equipamentos$ | async)" 
-              [value]="equipamento.id">
-              {{equipamento.nome}}
-            </ng-option>
-          </ng-select>
-        </div>
-        <div *ngIf="equipamentoId?.touched && equipamentoId?.invalid" class="col-sm-10 offset-sm-2 invalid-tooltip d-block">
-          <span *ngIf="equipamentoId?.errors?.['required']">Equipamento obrigatório.</span>
+        <label for="numeroSerie" class="col-sm-3 col-form-label">Descrição solicitante</label>
+          <div class="col-sm-9">
+            <input 
+            disabled
+            tabindex="2" 
+            type="text" 
+            class="form-control"
+            value={{requisicaoEditada.descricao}}>
+          </div>
+      </div>
+      <div class="mb-3 form-group row position-relative">
+        <label for="mensagem" class="col-sm-3 col-form-label">Descrição responsável</label>
+          <div class="col-sm-9">
+            <input 
+            tabindex="2" 
+            formControlName="mensagem"
+            type="text" 
+            class="form-control">
+          </div>
+      </div>
+      <div class="mb-3 form-group row position-relative">
+        <label for="status" class="col-sm-3 col-form-label">Status</label>
+        <div class="col-sm-9">
+          <div class="col-sm-6">
+            <ng-select formControlName="status" [clearable]="false" [searchable]="false">
+              <ng-option 
+                *ngFor="let statusRequisicao of (statusListagem)" 
+                [value]="statusRequisicao">
+                {{statusRequisicao}}
+              </ng-option>
+            </ng-select>
+          </div>
         </div>
       </div>
     </div>
@@ -114,4 +117,4 @@
       <button type="submit" class="btn btn-primary col-md-3" [disabled]="this.form.invalid">Gravar</button>
     </div>
   </form>
-</ng-template> -->
+</ng-template>

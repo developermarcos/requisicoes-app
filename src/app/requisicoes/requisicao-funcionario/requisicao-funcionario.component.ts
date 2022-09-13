@@ -11,6 +11,7 @@ import { FuncionarioService } from 'src/app/funcionarios/services/funcionario.se
 import { AuthenticationService } from 'src/app/shared/auth/authentication.service';
 import { MessageType } from 'src/app/shared/notification/model/message-type.notification.enum';
 import { NotificationService } from 'src/app/shared/notification/notification.service';
+import { Movimentacao } from '../model/movimentacao.model';
 import { RequisicaoStatus } from '../model/requisicao-status.enum';
 import { Requisicao } from '../model/requisicao.model';
 import { RequisicaoService } from '../services/requisicao.service';
@@ -29,6 +30,7 @@ export class RequisicaoFuncionarioComponent implements OnInit, OnDestroy {
   emailUsuario? : string | null;
   usuarioLogado$ : Subscription;
   idFuncionarioLogado : string;
+  public requisicaoAberta : RequisicaoStatus = RequisicaoStatus.Aberta;
   
   constructor(
     private modalService : NgbModal,
@@ -62,9 +64,20 @@ export class RequisicaoFuncionarioComponent implements OnInit, OnDestroy {
   get dataAbertura() : AbstractControl | null{
     return this.form.get('dataAbertura');
   }
+
   get status() : AbstractControl | null{
     return this.form.get('status');
   }
+  get ultimaAtualizacao() : AbstractControl | null{
+    return this.form.get('ultimaAtualizacao');
+  }
+  get ultimaMensagem() : AbstractControl | null{
+    return this.form.get('ultimaMensagem');
+  }
+  get movimentacoes() : AbstractControl | null{
+    return this.form.get('movimentacoes');
+  }
+
   get funcionarioId() : AbstractControl | null{
     return this.form.get('funcionarioId');
   }
@@ -95,7 +108,11 @@ export class RequisicaoFuncionarioComponent implements OnInit, OnDestroy {
       id: new FormControl(""),
       descricao: new FormControl(""),
       dataAbertura: new FormControl(""),
+
       status: new FormControl(""),
+      ultimaMensagem: new FormControl(""),
+      ultimaAtualizacao: new FormControl(""),
+      movimentacoes : new FormControl(""),
 
       funcionarioId : new FormControl(""),
       funcionario : new FormControl(""),
@@ -152,12 +169,12 @@ export class RequisicaoFuncionarioComponent implements OnInit, OnDestroy {
     const departamento = requisicao.departamento ? requisicao.departamento : null;
     const funcionario = requisicao.funcionario ? requisicao.funcionario : null;
     const equipamento = requisicao.equipamento ? requisicao.equipamento : null;
-
+    
     const requisicaoCompleta = {
       ...requisicao,
       departamento,
       funcionario,
-      equipamento
+      equipamento,
     };
 
     this.form.setValue(requisicaoCompleta);
@@ -165,9 +182,12 @@ export class RequisicaoFuncionarioComponent implements OnInit, OnDestroy {
 
   private configurarForm() {
     this.form.get("dataAbertura")?.setValue(new Date());
+    this.form.get("ultimaAtualizacao")?.setValue(new Date());
     this.form.get("equipamentoid")?.setValue(null);
     this.form.get("funcionarioId")?.setValue(this.idFuncionarioLogado);
     this.form.get("status")?.setValue(RequisicaoStatus.Aberta);
+    const movimentacoes : Movimentacao[] = [];
+    this.form.get("movimentacoes")?.setValue(movimentacoes);
   }
 
   public async excluir(requisicao : Requisicao){

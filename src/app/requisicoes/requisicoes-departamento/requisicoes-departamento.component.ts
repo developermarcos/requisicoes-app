@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, TemplateRef } from '@angular/core';
 import { AbstractControl, FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { map, Observable, Subscription, take } from 'rxjs';
@@ -9,7 +9,10 @@ import { EquipamentoService } from 'src/app/equipamentos/services/departamento.s
 import { Funcionario } from 'src/app/funcionarios/models/funcionario.model';
 import { FuncionarioService } from 'src/app/funcionarios/services/funcionario.service';
 import { AuthenticationService } from 'src/app/shared/auth/authentication.service';
+import { MessageType } from 'src/app/shared/notification/model/message-type.notification.enum';
 import { NotificationService } from 'src/app/shared/notification/notification.service';
+import { Movimentacao } from '../model/movimentacao.model';
+import { RequisicaoStatus } from '../model/requisicao-status.enum';
 import { Requisicao } from '../model/requisicao.model';
 import { RequisicaoService } from '../services/requisicao.service';
 
@@ -24,11 +27,14 @@ export class RequisicoesDepartamentoComponent implements OnInit, OnDestroy {
   public equipamentos$ : Observable<Equipamento[]>
   public funcionarios$ : Observable<Funcionario[]>
   public form : FormGroup;
+  public requisicaoEditada : Requisicao;
+
   emailUsuario? : string | null;
   usuarioLogado$ : Subscription;
   idFuncionarioLogado : string;
   departamentoIdUsuarioLogado? : string;
   departamentoUsuarioLogado? : Departamento;
+  
   constructor(
     private modalService : NgbModal,
     private fb : FormBuilder,
@@ -49,19 +55,9 @@ export class RequisicoesDepartamentoComponent implements OnInit, OnDestroy {
     this.equipamentos$ = this.equipamentoService.selecionarTodos();
     
     this.form = this.fb.group({
-      id: new FormControl(""),
-      descricao: new FormControl(""),
-      dataAbertura: new FormControl(""),
       status: new FormControl(""),
-
-      funcionarioId : new FormControl(""),
-      funcionario : new FormControl(""),
-
-      departamentoId : new FormControl(""),
-      departamento : new FormControl(""),
-
-      equipamentoId : new FormControl(""),
-      equipamento : new FormControl(""),
+      mensagem: new FormControl(""),
+      data: new FormControl(""),
     });
     
     this.usuarioLogado$ = this.authService.usuarioLogado.subscribe(usuario => {
@@ -86,45 +82,68 @@ export class RequisicoesDepartamentoComponent implements OnInit, OnDestroy {
     });
   }
 
+  // GET
   get departamentoNome() : string{
     return this.departamentoUsuarioLogado ? this.departamentoUsuarioLogado?.nome : "";
   }
-  // GET
-  get tituloModal() : string{
-    return this.id?.value ? "Atualização" : "Cadastro";
-  }
 
-  get id() : AbstractControl | null{
-    return this.form.get('id');
-  }
-  get descricao() : AbstractControl | null{
-    return this.form.get('descricao');
-  }
-  get dataAbertura() : AbstractControl | null{
-    return this.form.get('dataAbertura');
-  }
   get status() : AbstractControl | null{
     return this.form.get('status');
   }
-  get funcionarioId() : AbstractControl | null{
-    return this.form.get('funcionarioId');
+  get data() : AbstractControl | null{
+    return this.form.get('data');
   }
-  get funcionario() : AbstractControl | null{
-    return this.form.get('funcionario');
+  get mensagem() : AbstractControl | null{
+    return this.form.get('mensagem');
   }
-  get departamentoId(){
-    return this.form.get('departamentoId');
-  }
-  get departamento() : AbstractControl | null{
-    return this.form.get('departamento');
-  }
-  get equipamentoId() : AbstractControl | null{
-    return this.form.get('equipamentoId');
-  }
-  get equipamento() : AbstractControl | null{
-    return this.form.get('equipamento');
+
+  get statusListagem() : string[]{
+    return Object.keys(RequisicaoStatus).filter(key => isNaN(+key));
   }
 
   // END GET
 
+  public async gravar(modal : TemplateRef<any>, requisicao : Requisicao){
+    this.form.reset();
+
+    this.SetarValoresForm(requisicao);
+
+    try{
+      await this.modalService.open(modal, { size: 'lg' }).result;
+
+      if(!this.form.dirty || this.form.invalid){
+        this.notification.message(MessageType.Success,"Requisição","Formulário invalido, preencha todos os campos corretamente.");
+        return;
+      }
+      this.configurarRequisicaoEditada();
+
+      await this.requisicaoService.editar(this.requisicaoEditada); 
+      
+      this.notification.message(MessageType.Success,"Requisição", "Registro salvo com sucesso!");
+      
+    }catch(error){
+      if(error != "fechar" && error != "0" && error != "1"){
+        this.notification.message(MessageType.Info, "Requisição", `Nenhuma informação alterada.`);
+        console.log(error);
+      }
+        
+    }
+
+  }
+  SetarValoresForm(requisicao: Requisicao) {
+    this.requisicaoEditada = requisicao;
+    this.form.get('status')?.setValue(requisicao.status);
+  }
+  configurarRequisicaoEditada() : void {
+    const movimentacao = this.form.value;
+    movimentacao.data = new Date();
+
+    this.requisicaoEditada.status = movimentacao.status;
+    this.requisicaoEditada.ultimaAtualizacao = movimentacao.data;
+    this.requisicaoEditada.ultimaMensagem = movimentacao.mensagem;
+    this.requisicaoEditada.status = movimentacao.status;
+
+    this.requisicaoEditada.movimentacoes.push(movimentacao);
+  }
+  
 }

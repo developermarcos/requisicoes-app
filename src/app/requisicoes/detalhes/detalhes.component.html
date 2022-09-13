@@ -1,0 +1,45 @@
+<div class="container">
+  <div class="row bg-light shadow p-3 mb-5 bg-white rounded">
+    <div class="col-12 my-4">
+      <div class="text-center text-md-start">
+        <h1 class="fw-semibold text-primary">Detalhes da Requisição</h1>
+      </div>
+      <div class="d-flex justify-content-between">
+        <a
+          role="button"
+          class="btn btn-outline-primary col-md-2"
+          routerLink="/requisicoes/departamento">
+          <i class="pi pi-sign-out me-2 rotated-180"></i>Voltar
+        </a>
+      </div>
+    </div>
+    <div class="col-md-12 mb-3">
+      <small><i class="pi pi-id-card me-1"></i>{{requisicao?.id}}</small>
+      <h2 class="fs-4 card-title text-primary fw-semibold">{{ requisicao?.descricao }}</h2>
+      <ul>
+        <li><strong>Destino:</strong> {{ requisicao?.departamento?.nome }}</li>
+        <li><strong>Solicitante:</strong> {{ requisicao?.funcionario?.nome }}</li>
+        <li><strong>Data Abertura:</strong> {{ requisicao?.dataAbertura.toDate() | date : 'dd/MM/yyyy hh:mm' }}</li>
+        <li><strong>Última Atualização:</strong> {{ requisicao?.ultimaAtualizacao.toDate() | date : 'dd/MM/yyyy hh:mm' }}</li>
+      </ul>
+    </div>
+    <div class="col-md-12">
+      <table class="table table-light table-striped table-hover">
+        <thead class="thead-dark">
+          <tr>
+            <th class="">Data/Hora</th>
+            <th class="">Status</th>
+            <th class="">Descrição</th>
+          </tr>
+        </thead>
+        <tbody class="">
+          <tr *ngFor="let movimentacao of (requisicao?.movimentacoes)">
+            <td>{{ movimentacao.data.toDate() | date:'dd/MM/yyyy hh:mm'}}</td>
+            <td>{{ movimentacao.status }}</td>         
+            <td>{{ movimentacao.mensagem }}</td>         
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

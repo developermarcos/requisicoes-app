@@ -14,8 +14,7 @@ import { FuncionarioService } from './services/funcionario.service';
 
 @Component({
   selector: 'app-funcionario',
-  templateUrl: './funcionario.component.html',
-  styleUrls: ['./funcionario.component.css']
+  templateUrl: './funcionario.component.html'
 })
 export class FuncionarioComponent implements OnInit {
 

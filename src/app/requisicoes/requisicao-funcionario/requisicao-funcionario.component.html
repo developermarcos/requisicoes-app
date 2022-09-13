@@ -39,8 +39,8 @@
             <td>{{ requisicao.funcionario ? requisicao.funcionario?.nome : 'Não encontrado' }}</td>
             <td>{{ requisicao.descricao }}</td>
             <td>{{ requisicao.equipamento ? requisicao.equipamento?.nome : 'Não selecionado' }}</td>
-            <td class="d-flex gap-2">
-              <button
+            <td class="d-flex gap-2" *ngIf="requisicao.status == requisicaoAberta">
+              <button 
                 (click)="gravar(modal, requisicao)" 
                 type="button"
                 class="btn btn-success" 
@@ -54,6 +54,9 @@
                 title="Excluir">
                 <i class="pi pi-trash"></i>
               </button>
+            </td>
+            <td class="d-flex gap-2" *ngIf="requisicao.status != requisicaoAberta">
+              {{requisicao.status}}
             </td>
           </tr>
         </tbody>
