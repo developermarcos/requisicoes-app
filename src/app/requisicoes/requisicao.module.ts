@@ -10,6 +10,7 @@ import { NgSelectModule } from '@ng-select/ng-select';
 import { RequisicaoFuncionarioComponent } from './requisicao-funcionario/requisicao-funcionario.component';
 import { RequisicoesDepartamentoComponent } from './requisicoes-departamento/requisicoes-departamento.component';
 import { DetalhesComponent } from './detalhes/detalhes.component';
+import { RequisicoesFuncionarioListComponent } from './requisicao-funcionario/requisicoes-funcionario-list/requisicoes-funcionario-list.component';
 
 
 @NgModule({
@@ -17,7 +18,8 @@ import { DetalhesComponent } from './detalhes/detalhes.component';
     RequisicaoComponent,
     RequisicaoFuncionarioComponent,
     RequisicoesDepartamentoComponent,
-    DetalhesComponent
+    DetalhesComponent,
+    RequisicoesFuncionarioListComponent
   ],
   imports: [
     CommonModule,

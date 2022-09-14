@@ -20,49 +20,14 @@
         </button>
       </div>
     </div>
-    <div class="col-md-12">
-      <table class="table table-light table-striped table-hover">
-        <thead class="thead-dark">
-          <tr>
-            <th class="">Data abertura</th>
-            <th class="">Departamento</th>
-            <th class="">Solicitante</th>
-            <th class="">Descrição</th>
-            <th class="">Equipamento</th>
-            <th class="">Ações</th>
-          </tr>
-        </thead>
-        <tbody class="">
-          <tr *ngFor="let requisicao of (requisicoes$ | async)">
-            <td>{{ requisicao.dataAbertura.toDate() | date:'dd/MM/yyyy'}}</td>
-            <td>{{ requisicao.departamento?.nome }}</td>
-            <td>{{ requisicao.funcionario ? requisicao.funcionario?.nome : 'Não encontrado' }}</td>
-            <td>{{ requisicao.descricao }}</td>
-            <td>{{ requisicao.equipamento ? requisicao.equipamento?.nome : 'Não selecionado' }}</td>
-            <td class="d-flex gap-2" *ngIf="requisicao.status == requisicaoAberta">
-              <button 
-                (click)="gravar(modal, requisicao)" 
-                type="button"
-                class="btn btn-success" 
-                title="Editar">
-                <i class="pi pi-pencil"></i>
-              </button>
-              <button 
-              (click)="excluir(requisicao)"
-                type="button"
-                class="btn btn-danger" 
-                title="Excluir">
-                <i class="pi pi-trash"></i>
-              </button>
-            </td>
-            <td class="d-flex gap-2" *ngIf="requisicao.status != requisicaoAberta">
-              {{requisicao.status}}
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
+    
+    <app-requisicoes-funcionario-list 
+      [requisicoes$]="requisicoes$" 
+      [requisicaoAberta]="requisicaoAberta"
+      (eventExcluir)="excluir($event)">
+    </app-requisicoes-funcionario-list>
+    
+ </div>
 </div>
 
 <ng-template #modal let-modal>

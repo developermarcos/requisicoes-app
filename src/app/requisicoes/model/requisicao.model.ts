@@ -26,7 +26,4 @@ export class Requisicao{
   constructor(){
     this.movimentacoes = [];
   }
-  get quantidadeRequisicoes() : string{
-    return String(this.movimentacoes.length);
-  }
 }
