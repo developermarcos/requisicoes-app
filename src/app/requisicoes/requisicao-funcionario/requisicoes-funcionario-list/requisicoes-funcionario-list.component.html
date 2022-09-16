@@ -18,13 +18,13 @@
         <td>{{ requisicao.descricao }}</td>
         <td>{{ requisicao.equipamento ? requisicao.equipamento?.nome : 'Não selecionado' }}</td>
         <td class="d-flex gap-2" *ngIf="requisicao.status == requisicaoAberta">
-          <!-- <button 
-            (click)="gravar(modal, requisicao)" 
+          <button 
+            (click)="editar(requisicao)" 
             type="button"
             class="btn btn-success" 
             title="Editar">
             <i class="pi pi-pencil"></i>
-          </button> -->
+          </button>
           <button 
           (click)="excluir(requisicao)"
             type="button"

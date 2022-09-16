@@ -3,7 +3,7 @@
     <div class="col-12 my-4">
       <div class="text-center text-md-start">
         <h1 class="fw-semibold text-primary">Requisicoes</h1>
-        <h6 *ngIf="emailUsuarioLogado" class="pb-3 pt-1">Usuário: <span class="bg-primary text-white py-1 px-2 rounded">{{emailUsuarioLogado}}</span></h6>
+        <h6 *ngIf="funcionarioLogado.email" class="pb-3 pt-1">Usuário: <span class="bg-primary text-white py-1 px-2 rounded">{{funcionarioLogado.email}}</span></h6>
       </div>
       <div class="d-flex justify-content-between">
         <a
@@ -20,13 +20,12 @@
         </button>
       </div>
     </div>
-    
     <app-requisicoes-funcionario-list 
       [requisicoes$]="requisicoes$" 
       [requisicaoAberta]="requisicaoAberta"
-      (eventExcluir)="excluir($event)">
+      (eventExcluir)="excluir($event.requisicao)"
+      (eventEditar)="gravar(modal, $event.requisicao)">
     </app-requisicoes-funcionario-list>
-    
  </div>
 </div>
 

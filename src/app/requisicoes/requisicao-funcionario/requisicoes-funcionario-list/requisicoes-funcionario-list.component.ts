@@ -12,10 +12,14 @@ export class RequisicoesFuncionarioListComponent implements OnInit {
   @Input() requisicoes$ : Observable<Requisicao[]>
   @Input() requisicaoAberta : RequisicaoStatus = RequisicaoStatus.Aberta
 
-  @Output() public eventExcluir = new EventEmitter<Requisicao>();
+  @Output() public eventExcluir = new EventEmitter<any>();
+  @Output() public eventEditar = new EventEmitter<any>();
 
   excluir(requisicaoExcluir : Requisicao){
-    this.eventExcluir.emit(requisicaoExcluir);
+    this.eventExcluir.emit({requisicao: requisicaoExcluir});
+  }
+  editar(requisicaoEditar : Requisicao){
+    this.eventEditar.emit({requisicao: requisicaoEditar});
   }
 
   constructor() { }

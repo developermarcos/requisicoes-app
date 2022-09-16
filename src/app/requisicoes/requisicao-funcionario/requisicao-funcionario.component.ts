@@ -1,5 +1,6 @@
 import { Component, OnDestroy, OnInit, TemplateRef } from '@angular/core';
 import { FormGroup, FormBuilder, AbstractControl, FormControl } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Observable, Subscription } from 'rxjs';
 import { Departamento } from 'src/app/departamentos/models/departamento.model';
@@ -20,17 +21,15 @@ import { RequisicaoService } from '../services/requisicao.service';
   selector: 'app-requisicao-funcionario',
   templateUrl: './requisicao-funcionario.component.html'
 })
-export class RequisicaoFuncionarioComponent implements OnInit, OnDestroy {
+export class RequisicaoFuncionarioComponent implements OnInit {
 
   public requisicoes$ : Observable<Requisicao[]>
   public departamentos$ : Observable<Departamento[]>
   public equipamentos$ : Observable<Equipamento[]>
   public funcionarios$ : Observable<Funcionario[]>
   public form : FormGroup;
-  emailUsuario? : string | null;
-  usuarioLogado$ : Subscription;
-  idFuncionarioLogado : string;
   public requisicaoAberta : RequisicaoStatus = RequisicaoStatus.Aberta;
+  public funcionarioLogado : Funcionario
   
   constructor(
     private modalService : NgbModal,
@@ -40,19 +39,14 @@ export class RequisicaoFuncionarioComponent implements OnInit, OnDestroy {
     private departamentoService : DepartamentoService,
     private funcionarioService : FuncionarioService,
     private equipamentoService : EquipamentoService,
-    private authService : AuthenticationService
+    private authService : AuthenticationService,
+    private route : ActivatedRoute
   ) { }
-  ngOnDestroy(): void {
-    this.usuarioLogado$.unsubscribe();
-  }
+  
 
   // GET
   get tituloModal() : string{
     return this.id?.value ? "Atualização" : "Cadastro";
-  }
-
-  get emailUsuarioLogado(){
-    return this.emailUsuario;
   }
 
   get id() : AbstractControl | null{
@@ -124,16 +118,8 @@ export class RequisicaoFuncionarioComponent implements OnInit, OnDestroy {
       equipamento : new FormControl(""),
     });
     
-    this.usuarioLogado$ = this.authService.usuarioLogado.subscribe(usuario => {
-        this.emailUsuario = usuario?.email!;
-        
-        this.funcionarioService.selecionarPorEmail(this.emailUsuario)
-        .subscribe(funcionarioEncotrado => {
-          this.idFuncionarioLogado = funcionarioEncotrado.id
-          this.requisicoes$ = this.requisicaoService.selecionarRequisicoesPorFuncionarioId(this.idFuncionarioLogado);
-        });
-
-    });    
+    this.funcionarioLogado = this.route.snapshot.data['funcionarioLogado'];
+    this.requisicoes$ = this.requisicaoService.selecionarRequisicoesPorFuncionarioId(this.funcionarioLogado.id);
   }
 
   public async gravar(modal : TemplateRef<any>, requisicao? : Requisicao){
@@ -184,7 +170,7 @@ export class RequisicaoFuncionarioComponent implements OnInit, OnDestroy {
     this.form.get("dataAbertura")?.setValue(new Date());
     this.form.get("ultimaAtualizacao")?.setValue(new Date());
     this.form.get("equipamentoid")?.setValue(null);
-    this.form.get("funcionarioId")?.setValue(this.idFuncionarioLogado);
+    this.form.get("funcionarioId")?.setValue(this.funcionarioLogado.id);
     this.form.get("status")?.setValue(RequisicaoStatus.Aberta);
     const movimentacoes : Movimentacao[] = [];
     this.form.get("movimentacoes")?.setValue(movimentacoes);
