@@ -1,5 +1,6 @@
 import { Component, OnDestroy, OnInit, TemplateRef } from '@angular/core';
 import { AbstractControl, FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { map, Observable, Subscription, take } from 'rxjs';
 import { Departamento } from 'src/app/departamentos/models/departamento.model';
@@ -11,7 +12,6 @@ import { FuncionarioService } from 'src/app/funcionarios/services/funcionario.se
 import { AuthenticationService } from 'src/app/shared/auth/authentication.service';
 import { MessageType } from 'src/app/shared/notification/model/message-type.notification.enum';
 import { NotificationService } from 'src/app/shared/notification/notification.service';
-import { Movimentacao } from '../model/movimentacao.model';
 import { RequisicaoStatus } from '../model/requisicao-status.enum';
 import { Requisicao } from '../model/requisicao.model';
 import { RequisicaoService } from '../services/requisicao.service';
@@ -20,7 +20,7 @@ import { RequisicaoService } from '../services/requisicao.service';
   selector: 'app-requisicoes-departamento',
   templateUrl: './requisicoes-departamento.component.html'
 })
-export class RequisicoesDepartamentoComponent implements OnInit, OnDestroy {
+export class RequisicoesDepartamentoComponent implements OnInit {
 
   public requisicoes$ : Observable<Requisicao[]>
   public departamentos$ : Observable<Departamento[]>
@@ -28,11 +28,7 @@ export class RequisicoesDepartamentoComponent implements OnInit, OnDestroy {
   public funcionarios$ : Observable<Funcionario[]>
   public form : FormGroup;
   public requisicaoEditada : Requisicao;
-
-  emailUsuario? : string | null;
-  usuarioLogado$ : Subscription;
-  idFuncionarioLogado : string;
-  departamentoIdUsuarioLogado? : string;
+  public funcionarioLogado : Funcionario;
   departamentoUsuarioLogado? : Departamento;
   
   constructor(
@@ -43,11 +39,9 @@ export class RequisicoesDepartamentoComponent implements OnInit, OnDestroy {
     private departamentoService : DepartamentoService,
     private funcionarioService : FuncionarioService,
     private equipamentoService : EquipamentoService,
-    private authService : AuthenticationService
+    private authService : AuthenticationService,
+    private route : ActivatedRoute
   ) { }
-  ngOnDestroy(): void {
-    this.usuarioLogado$.unsubscribe();
-  }
 
   ngOnInit(): void {
     this.funcionarios$ = this.funcionarioService.selecionarTodos();
@@ -60,26 +54,14 @@ export class RequisicoesDepartamentoComponent implements OnInit, OnDestroy {
       data: new FormControl(""),
     });
     
-    this.usuarioLogado$ = this.authService.usuarioLogado.subscribe(usuario => {
-        this.emailUsuario = usuario?.email!
+    this.funcionarioLogado = this.route.snapshot.data['funcionarioLogado'];
+    
+    this.requisicoes$ = this.requisicaoService.selecionarRequisicoesPorDepartamento(this.funcionarioLogado.departamentoId);
 
-        this.funcionarioService.selecionarPorEmail(this.emailUsuario)
-        .subscribe(funcionarioEncotrado => {
-          this.idFuncionarioLogado = funcionarioEncotrado.id;
-
-          this.funcionarioService.selecionarDepartamentoIdFuncionarioPorFuncionarioId(this.idFuncionarioLogado)
-          .subscribe(departamentoId => {
-            if(departamentoId){
-              this.departamentoIdUsuarioLogado = departamentoId;
-              this.requisicoes$ = this.requisicaoService.selecionarRequisicoesPorDepartamento(departamentoId);
-              this.departamentoService.selecionarPorId(departamentoId)
-                .subscribe(departamento => {
-                  this.departamentoUsuarioLogado = departamento;
-                });
-            }
-          });
-        });
-    });
+    this.departamentoService.selecionarPorId(this.funcionarioLogado.departamentoId)
+      .subscribe(departamento => {
+        this.departamentoUsuarioLogado = departamento;
+      });
   }
 
   // GET
@@ -130,11 +112,11 @@ export class RequisicoesDepartamentoComponent implements OnInit, OnDestroy {
     }
 
   }
-  SetarValoresForm(requisicao: Requisicao) {
+  private SetarValoresForm(requisicao: Requisicao) {
     this.requisicaoEditada = requisicao;
     this.form.get('status')?.setValue(requisicao.status);
   }
-  configurarRequisicaoEditada() : void {
+  private configurarRequisicaoEditada() : void {
     const movimentacao = this.form.value;
     movimentacao.data = new Date();
 
