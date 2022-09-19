@@ -4,6 +4,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Observable } from 'rxjs';
 import { MessageType } from '../shared/notification/model/message-type.notification.enum';
 import { NotificationService } from '../shared/notification/notification.service';
+import { dataFuturaValidator } from '../shared/validators/data-futura.validator';
 import { Equipamento } from './model/equipamento.model';
 import { EquipamentoService } from './services/departamento.service';
 
@@ -76,6 +77,7 @@ export class EquipamentoComponent implements OnInit {
         "", 
         [
           Validators.required,
+          dataFuturaValidator()
         ]
       )
     });

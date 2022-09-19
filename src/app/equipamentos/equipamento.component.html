@@ -126,8 +126,9 @@
             class="form-control" 
             placeholder="Digite a data de fabricação do equipamento">
         </div>
-        <div *ngIf="dataFabricacao?.touched && dataFabricacao?.invalid" class="col-sm-10 offset-sm-2 invalid-tooltip d-block">
+        <div *ngIf="dataFabricacao?.touched && dataFabricacao?.invalid" class="col-sm-9 offset-sm-3 invalid-tooltip d-block">
           <span *ngIf="dataFabricacao?.errors?.['required']">Data de fabricação é obrigatória.</span>
+          <span *ngIf="dataFabricacao?.errors?.['datafutura']">Data de fabrição não pode ser maior que hoje.</span>
         </div>
       </div>
     </div>
